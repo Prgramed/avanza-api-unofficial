@@ -1,10 +1,12 @@
 # avanza-api-unofficial
 
 ![CI](https://github.com/prgramed/avanza-api-unofficial/workflows/CI/badge.svg)
+![npm version](https://img.shields.io/npm/v/avanza-api-unofficial.svg)
+![npm downloads](https://img.shields.io/npm/dm/avanza-api-unofficial.svg)
 
-A Node.js wrapper for the unofficial Avanza API. Please note that this is only a proof of concept, hence not meant to be used by anyone.
+A Node.js wrapper for the unofficial Avanza API.
 
-It might also be valuable to note that I am not affiliated with Avanza Bank AB in any way. The underlying API can be taken down or changed without warning at any point in time.
+**⚠️ Disclaimer:** This is an unofficial API wrapper and is not affiliated with or endorsed by Avanza Bank AB. The underlying API can be changed or removed at any time without notice. Use at your own risk.
 
 ## Installation
 

@@ -1,0 +1,38 @@
+# Source files
+lib/
+scripts/
+tests/
+
+# Development files
+.eslintrc
+.prettierrc
+.env
+.env-example
+.github/
+
+# Build files
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git files
+.git/
+.gitignore
+
+# Documentation source
+API.md
+CLAUDE.md
+
+# Example files
+example.js
