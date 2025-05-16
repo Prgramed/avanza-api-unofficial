@@ -2,8 +2,8 @@ const test = require('ava')
 const sinon = require('sinon')
 const path = require('path')
 
-const Avanza = require('../dist/index.js')
-const constants = require('../dist/constants.js')
+const Avanza = require('../dist/index')
+const constants = require('../dist/constants')
 
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') })
 
@@ -130,11 +130,10 @@ test.serial('getOrder()', async t => {
 })
 
 test.serial('deleteOrder()', async t => {
-  await t.context.avanza.deleteOrder('12345', '54321')
+  await t.context.avanza.deleteOrder({ accountId: '12345', orderId: '54321' })
 
   const expectedPath = constants.paths.ORDER_DELETE_PATH
-  const expectedQuery = '?accountId=12345&orderId=54321'
   const actual = t.context.avanza.call.args[0]
-  const expected = ['DELETE', expectedPath + expectedQuery]
+  const expected = ['POST', expectedPath, { accountId: '12345', orderId: '54321' }]
   t.deepEqual(actual, expected)
 })

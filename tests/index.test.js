@@ -2,7 +2,7 @@ const test = require('ava')
 const path = require('path')
 const sinon = require('sinon')
 
-const Avanza = require('../dist/index.js')
+const Avanza = require('../dist/index')
 
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') })
 

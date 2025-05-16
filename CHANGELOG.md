@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.3] - 2025-05-16
+
+### Changed
+- Version bump to fix tests
+
+## [1.1.2] - 2025-05-16
+
+### Changed
+- Version bump
+
+## [1.1.1] - 2025-05-16
+
+### Fixed
+- Resolved workflow versioning issue
+
+## [1.1.0] - 2025-05-16
+
+### Fixed
+- Fixed search endpoint functionality
+
 ## [1.0.0] - 2025-05-16
 
 ### Added
