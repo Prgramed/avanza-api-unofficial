@@ -1,0 +1,43 @@
+{
+  "extends": [
+    "airbnb-base",
+    "prettier"
+  ],
+  "rules": {
+    "no-underscore-dangle": 0,
+    "semi": 0,
+    "comma-dangle": 0,
+    "no-param-reassign": 0,
+    "max-len": 0,
+    "quote-props": 0,
+    "no-restricted-syntax": [
+      "off",
+      "BinaryExpression[operator='of']"
+    ],
+    "no-await-in-loop": 0,
+    "no-useless-return": 0,
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "**/tests/**/*",
+          "**/scripts/**/*"
+        ]
+      }
+    ],
+    "no-continue": 0,
+    "no-plusplus": [
+      "error",
+      {
+        "allowForLoopAfterthoughts": true
+      }
+    ],
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "err"
+      }
+    ],
+    "no-console": 0
+  }
+}
