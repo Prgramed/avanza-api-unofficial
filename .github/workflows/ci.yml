@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run linter
+      run: npm run lint
+
+    - name: Build
+      run: npm run build
+
+    # Tests are commented out since they require environment variables
+    # Uncomment and configure secrets in GitHub if you want to run tests
+    # - name: Run tests
+    #   env:
+    #     AVANZA_USERNAME: ${{ secrets.AVANZA_USERNAME }}
+    #     AVANZA_PASSWORD: ${{ secrets.AVANZA_PASSWORD }}
+    #     AVANZA_TOTP_SECRET: ${{ secrets.AVANZA_TOTP_SECRET }}
+    #     AVANZA_ACCOUNT: ${{ secrets.AVANZA_ACCOUNT }}
+    #     AVANZA_STOCK: ${{ secrets.AVANZA_STOCK }}
+    #     AVANZA_STOCK2: ${{ secrets.AVANZA_STOCK2 }}
+    #   run: npm test
