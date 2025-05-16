@@ -35,7 +35,12 @@ jobs:
         if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
         run: |
           VERSION=${{ github.event.inputs.version || steps.tag_version.outputs.VERSION }}
-          npm version $VERSION --no-git-tag-version
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          if [ "$VERSION" != "$CURRENT_VERSION" ]; then
+            npm version $VERSION --no-git-tag-version
+          else
+            echo "Version already set to $VERSION"
+          fi
 
       - name: Install dependencies
         run: npm ci
