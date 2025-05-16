@@ -1,6 +1,6 @@
 {
   "name": "avanza-api-unofficial",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "An unofficial API wrapper for Avanza Bank",
   "main": "dist/index.js",
   "scripts": {
