@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.9] - 2025-05-18
+
+### Changed
+- Account overview call update
+
 ## [1.1.8] - 2025-05-18
 
 ### Changed
