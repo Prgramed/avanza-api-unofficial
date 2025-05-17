@@ -1,6 +1,17 @@
 # API Updates
 
-## Version 1.1.7 - 2025-05-18
+## Version 1.1.9 - 2025-05-18
+
+### Added
+- New `getAccountsList()` method that returns all accounts with detailed information
+- New `getAccountPositions(accountId)` method to get positions for a specific account
+
+### Changed
+- Updated account overview endpoint to use the new API format
+- Updated positions API to use new endpoints
+- Enhanced `getPositions()` to maintain backward compatibility while using new API
+
+## Version 1.1.8 - 2025-05-18
 Avanza has updated their API endpoints. This library now uses the new _api format instead of the old _mobile format for most endpoints. This should improve reliability and compatibility with Avanza's latest API changes.
 
 The following key endpoints have been updated:
@@ -261,6 +272,8 @@ regardless of whether or not you want data for that account.</p>
     * [.authenticate(credentials)](#Avanza+authenticate)
     * [.disconnect()](#Avanza+disconnect)
     * [.getPositions()](#Avanza+getPositions)
+    * [.getAccountPositions(accountId)](#Avanza+getAccountPositions)
+    * [.getAccountsList()](#Avanza+getAccountsList)
     * [.getOverview()](#Avanza+getOverview)
     * [.getAccountOverview(accountId)](#Avanza+getAccountOverview)
     * [.getDealsAndOrders()](#Avanza+getDealsAndOrders)
@@ -308,9 +321,47 @@ generate codes can be provided in <code>totpSecret</code>.</p>
 <a name="Avanza+getPositions"></a>
 
 ### avanza.getPositions()
-<p>Get all <code>positions</code> held by this user.</p>
+<p>Get all positions held by this user across all accounts.</p>
+<p>This method will first get all accounts, then fetch positions for each account
+and combine them into a single response. For backward compatibility, it transforms
+the new API format into the old format while preserving the raw data.</p>
 
 **Kind**: instance method of [<code>Avanza</code>](#Avanza)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - Promise resolving to positions data
+
+<a name="Avanza+getAccountPositions"></a>
+
+### avanza.getAccountPositions(accountId)
+<p>Get all positions held by this user for a specific account.</p>
+<p>Returns detailed position data in the new API format including:</p>
+<ul>
+<li>Positions with orderbooks (stocks, funds, etc.)</li>
+<li>Positions without orderbooks</li>
+<li>Cash positions</li>
+</ul>
+
+**Kind**: instance method of [<code>Avanza</code>](#Avanza)  
+**Returns**: <code>Promise.&lt;Object&gt;</code> - Promise resolving to positions data
+
+| Param | Type | Description |
+| --- | --- | --- |
+| accountId | <code>String</code> | <p>The URL parameter ID for the account</p> |
+<a name="Avanza+getAccountsList"></a>
+
+### avanza.getAccountsList()
+<p>Get list of all accounts.</p>
+<p>Returns detailed information about all accounts including:</p>
+<ul>
+<li>Account ID and name</li>
+<li>Account type</li>
+<li>Clearing account number</li>
+<li>URL parameter ID (for direct linking)</li>
+<li>Account settings</li>
+</ul>
+
+**Kind**: instance method of [<code>Avanza</code>](#Avanza)  
+**Returns**: <code>Promise.&lt;Array&gt;</code> - Promise resolving to an array of account objects
+
 <a name="Avanza+getOverview"></a>
 
 ### avanza.getOverview()

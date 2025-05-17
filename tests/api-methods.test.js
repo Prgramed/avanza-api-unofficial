@@ -67,12 +67,60 @@ test('authentication sets required properties', async (t) => {
 })
 
 // Path tests - These run without real API calls
-test.serial('path: getPositions()', async (t) => {
+test.serial('path: getAccountPositions()', async (t) => {
   const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
-  await t.context.avanza.getPositions()
+  await t.context.avanza.getAccountPositions('test-account-id')
   
   const actual = callStub.args[0]
-  const expected = ['GET', constants.paths.POSITIONS_PATH]
+  const expected = ['GET', constants.paths.POSITIONS_PATH.replace('{0}', 'test-account-id')]
+  t.deepEqual(actual, expected)
+  callStub.restore()
+})
+
+test.serial('path: getPositions()', async (t) => {
+  // This is more complex as it now depends on getAccountsList and getAccountPositions
+  // We'll mock these methods directly instead of stubbing the call method
+  
+  // Create mock accounts list
+  const mockAccounts = [
+    {
+      id: "12345",
+      name: "Test Account",
+      urlParameterId: "test-url-id",
+      accountSettings: { IS_HIDDEN: false }
+    }
+  ];
+  
+  // Create mock positions
+  const mockPositions = {
+    withOrderbook: [],
+    withoutOrderbook: [],
+    cashPositions: []
+  };
+  
+  // Replace the methods with stubs
+  const getAccountsListStub = sinon.stub(t.context.avanza, 'getAccountsList').returns(Promise.resolve(mockAccounts));
+  const getAccountPositionsStub = sinon.stub(t.context.avanza, 'getAccountPositions').returns(Promise.resolve(mockPositions));
+  
+  // Call the method
+  await t.context.avanza.getPositions();
+  
+  // Verify the calls
+  t.true(getAccountsListStub.calledOnce);
+  t.true(getAccountPositionsStub.calledOnce);
+  t.is(getAccountPositionsStub.args[0][0], 'test-url-id');
+  
+  // Restore stubs
+  getAccountsListStub.restore();
+  getAccountPositionsStub.restore();
+})
+
+test.serial('path: getAccountsList()', async (t) => {
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve([]))
+  await t.context.avanza.getAccountsList()
+  
+  const actual = callStub.args[0]
+  const expected = ['GET', constants.paths.ACCOUNTS_LIST_PATH]
   t.deepEqual(actual, expected)
   callStub.restore()
 })
@@ -318,19 +366,175 @@ test.serial('path: getInspirationList()', async (t) => {
 })
 
 // API tests with mocked responses
-test('mock: getPositions() returns positions', async (t) => {
-  // No need to store original call since each test has its own context
-  // Simply override the call method for this test
-  t.context.avanza.call = () => Promise.resolve({ 
-    instrumentPositions: [], 
-    totalBalance: 10000, 
-    totalOwnCapital: 9000 
-  });
+test('mock: getAccountPositions() returns positions for a specific account', async (t) => {
+  // Mock response from the new API format
+  const mockPositionsResponse = {
+    withOrderbook: [
+      {
+        account: {
+          id: "1878993",
+          type: "KAPITALFORSAKRING",
+          name: "KF",
+          urlParameterId: "GZp2LfXV-MN_vCt59XJKAA",
+          hasCredit: false
+        },
+        instrument: {
+          id: "1922174",
+          type: "CERTIFICATE",
+          name: "BULL NOVO X8 AVA 4",
+          orderbook: {
+            quote: {
+              latest: { value: 0.131 },
+              change: { value: -0.0420 },
+              changePercent: { value: -24.28 }
+            }
+          }
+        },
+        value: { value: 124.9740 },
+        volume: { value: 954 },
+        averageAcquiredPrice: { value: 23.73000 },
+        acquiredValue: { value: 22638.42000 }
+      }
+    ],
+    withoutOrderbook: [],
+    cashPositions: [
+      {
+        account: {
+          id: "1878993",
+          type: "KAPITALFORSAKRING",
+          name: "KF",
+          urlParameterId: "GZp2LfXV-MN_vCt59XJKAA"
+        },
+        totalBalance: { value: 1466.5700 }
+      }
+    ]
+  };
   
-  const positions = await t.context.avanza.getPositions();
+  t.context.avanza.call = () => Promise.resolve(mockPositionsResponse);
+  
+  const positions = await t.context.avanza.getAccountPositions('test-account-id');
   
   t.truthy(positions);
   t.true(typeof positions === 'object');
+  t.true(Array.isArray(positions.withOrderbook));
+  t.is(positions.withOrderbook.length, 1);
+  t.is(positions.withOrderbook[0].instrument.name, 'BULL NOVO X8 AVA 4');
+})
+
+test('mock: getPositions() returns positions with backward compatibility', async (t) => {
+  // Create mock response data
+  const mockAccounts = [
+    {
+      id: "1878993",
+      name: "KF",
+      urlParameterId: "GZp2LfXV-MN_vCt59XJKAA",
+      accountSettings: { IS_HIDDEN: false }
+    }
+  ];
+  
+  const mockPositionsResponse = {
+    withOrderbook: [
+      {
+        account: {
+          id: "1878993",
+          type: "KAPITALFORSAKRING",
+          name: "KF",
+          urlParameterId: "GZp2LfXV-MN_vCt59XJKAA",
+          hasCredit: false
+        },
+        instrument: {
+          id: "1922174",
+          type: "CERTIFICATE",
+          name: "BULL NOVO X8 AVA 4",
+          orderbook: {
+            quote: {
+              latest: { value: 0.131 },
+              change: { value: -0.0420 },
+              changePercent: { value: -24.28 }
+            }
+          }
+        },
+        value: { value: 124.9740 },
+        volume: { value: 954 },
+        averageAcquiredPrice: { value: 23.73000 },
+        acquiredValue: { value: 22638.42000 }
+      }
+    ],
+    withoutOrderbook: [],
+    cashPositions: [
+      {
+        account: {
+          id: "1878993",
+          type: "KAPITALFORSAKRING",
+          name: "KF",
+          urlParameterId: "GZp2LfXV-MN_vCt59XJKAA"
+        },
+        totalBalance: { value: 1466.5700 }
+      }
+    ]
+  };
+  
+  // Set up the stubs directly
+  t.context.avanza.getAccountsList = () => Promise.resolve(mockAccounts);
+  t.context.avanza.getAccountPositions = () => Promise.resolve(mockPositionsResponse);
+  
+  const positions = await t.context.avanza.getPositions();
+  
+  // Test the transformed response
+  t.truthy(positions);
+  t.true(typeof positions === 'object');
+  t.true(Array.isArray(positions.instrumentPositions));
+  t.is(positions.instrumentPositions.length, 1);
+  t.is(positions.instrumentPositions[0].instrument.name, 'BULL NOVO X8 AVA 4');
+  t.is(positions.instrumentPositions[0].instrumentType, 'CERTIFICATE');
+  t.is(typeof positions.totalBalance, 'number');
+  t.is(typeof positions.totalOwnCapital, 'number');
+  
+  // Verify that the raw response is also available
+  t.truthy(positions.rawPositions);
+  t.is(positions.rawPositions, mockPositionsResponse);
+})
+
+test('mock: getAccountsList() returns accounts list', async (t) => {
+  // Mock the account list response
+  t.context.avanza.call = () => Promise.resolve([
+    {
+      id: "8098594",
+      name: "8098594",
+      clearingAccountNumber: "9557-8098594",
+      accountType: "AKTIEFONDKONTO",
+      active: true,
+      hasCreditAccount: false,
+      urlParameterId: "WBqkjCpHoYcgpoqzbudV1g",
+      hasMultipleOwners: false,
+      owner: true,
+      accountSettings: {
+        IS_HIDDEN: true
+      }
+    },
+    {
+      id: "1878993",
+      name: "KF",
+      clearingAccountNumber: "9557-1878993",
+      accountType: "KAPITALFORSAKRING",
+      active: true,
+      hasCreditAccount: false,
+      urlParameterId: "GZp2LfXV-MN_vCt59XJKAA",
+      hasMultipleOwners: false,
+      owner: true,
+      accountSettings: {
+        IS_HIDDEN: false
+      }
+    }
+  ]);
+  
+  const accounts = await t.context.avanza.getAccountsList();
+  
+  t.truthy(accounts);
+  t.true(Array.isArray(accounts));
+  t.is(accounts.length, 2);
+  t.is(accounts[0].accountType, "AKTIEFONDKONTO");
+  t.is(accounts[1].name, "KF");
 })
 
 test('mock: getOverview() returns overview', async (t) => {

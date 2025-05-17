@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.10] - 2025-05-18
+
+### Changed
+- New `getAccountsList()` method that returns all accounts with detailed information
+- Updated account overview endpoint to use the new API format
+- fixed getPositions to use the new API method
+
 ## [1.1.9] - 2025-05-18
 
 ### Changed
