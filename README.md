@@ -17,7 +17,7 @@ $ npm install avanza-api-unofficial
 ```
 ## Documentation
 
-Refer to [API.md](./API.md).
+Refer to [API.md](./API.md) for complete API documentation. The documentation is generated from JSDoc comments using jsdoc-to-markdown.
 
 ## Getting a TOTP Secret
 
@@ -68,13 +68,36 @@ avanza.authenticate({
 
 Refer to [API.md](API.md).
 
-## Tests
+## Testing
 
-Tests will not run without an `.env` file. Use the `.env-example` as reference.
+This project contains comprehensive tests for all API methods. Tests are run automatically:
+- Before any commit (via pre-commit hook)
+- During the release process
+
+### Running Tests
+
+Tests will run with or without credentials. If you don't provide credentials in a `.env` file, the API call tests will be skipped, but the path construction tests will still run.
+
+1. Copy `.env.example` to `.env` and fill in your credentials
+2. Run the tests:
 
 ```bash
+# Run all tests
 $ npm test
+
+# Run tests with coverage report
+$ npm run test:coverage
 ```
+
+### Test Structure
+
+- **Path Tests**: Verify all API endpoint paths are constructed correctly (runs without credentials)
+- **API Tests**: Verify actual API calls work correctly (requires credentials)
+- **No Real Trades**: The tests are designed to check functionality without placing any actual orders
+
+### Testing in CI/CD
+
+The GitHub Actions workflow runs the path tests automatically without requiring credentials.
 ## LICENSE
 
 MIT license. See the LICENSE file for details.

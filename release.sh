@@ -22,30 +22,39 @@ fi
 
 echo -e "${YELLOW}Starting $RELEASE_TYPE release...${NC}"
 
-# 1. Check for test credentials
+# 1. Build the code first
+echo -e "${YELLOW}Building the project...${NC}"
+npm run build
+
+# 2. Run tests
 if [ ! -f ".env" ]; then
-    echo -e "${YELLOW}No .env file found. Skipping tests that require credentials.${NC}"
-    echo -e "${YELLOW}Running linting only...${NC}"
-    npm run lint
+    echo -e "${YELLOW}No .env file found. Path tests will run but API tests will be skipped.${NC}"
 else
-    echo -e "${YELLOW}Running tests and linting...${NC}"
-    npm test
-    npm run lint
+    echo -e "${YELLOW}Running tests with credentials...${NC}"
 fi
 
-# 2. Get current version
+echo -e "${YELLOW}Running all tests...${NC}"
+npm test
+
+echo -e "${YELLOW}Running linting...${NC}"
+npm run lint
+
+# If any of the above commands fail, the script will exit due to 'set -e'
+echo -e "${GREEN}✅ Tests and linting passed!${NC}"
+
+# 3. Get current version
 CURRENT_VERSION=$(node -p "require('./package.json').version")
 echo -e "${GREEN}Current version: $CURRENT_VERSION${NC}"
 
-# 3. Bump version
+# 4. Bump version
 echo -e "${YELLOW}Bumping version ($RELEASE_TYPE)...${NC}"
 npm version $RELEASE_TYPE --no-git-tag-version
 
-# 4. Get new version
+# 5. Get new version
 NEW_VERSION=$(node -p "require('./package.json').version")
 echo -e "${GREEN}New version: $NEW_VERSION${NC}"
 
-# 5. Update CHANGELOG.md
+# 6. Update CHANGELOG.md
 echo -e "${YELLOW}Updating CHANGELOG.md...${NC}"
 DATE=$(date +%Y-%m-%d)
 
@@ -70,19 +79,19 @@ echo -e "${YELLOW}Please edit CHANGELOG.md to add your changes for version $NEW_
 echo -e "${YELLOW}Press Enter when you're done editing...${NC}"
 read
 
-# 6. Stage all changes
+# 7. Stage all changes
 echo -e "${YELLOW}Staging changes...${NC}"
 git add -A
 
-# 7. Commit with version message
+# 8. Commit with version message
 echo -e "${YELLOW}Committing changes...${NC}"
 git commit -m "v$NEW_VERSION"
 
-# 8. Create tag
+# 9. Create tag
 echo -e "${YELLOW}Creating tag...${NC}"
 git tag "v$NEW_VERSION"
 
-# 9. Push changes and tag
+# 10. Push changes and tag
 echo -e "${YELLOW}Pushing to remote...${NC}"
 git push origin main
 git push origin "v$NEW_VERSION"

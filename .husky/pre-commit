@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run tests and linting before allowing commit
+echo "🧪 Running tests..."
+npm run build
+npm test
+
+echo "🔍 Running linting..."
+npm run lint
+
+# If we've reached here, all tests passed
+echo "✅ Tests and linting passed. Proceeding with commit..."

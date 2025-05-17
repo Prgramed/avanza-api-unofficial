@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.6] - 2025-05-17
+
+### Changed
+- Search API updates
+
 ## [1.1.5] - 2025-05-16
 
 ### Changed
