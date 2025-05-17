@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.8] - 2025-05-18
+
+### Changed
+- Updated all API endpoints from _mobile to _api format
+- Improved API endpoint compatibility with Avanza's latest changes
+- Enhanced Stock, Fund, and Chart data endpoints for better reliability
+
+## [1.1.7] - 2025-05-18
+
+### Changed
+- Updated all API endpoints from _mobile to _api format
+- Improved API endpoint compatibility with Avanza's latest changes
+- Enhanced Stock, Fund, and Chart data endpoints for better reliability
+
 ## [1.1.6] - 2025-05-17
 
 ### Changed

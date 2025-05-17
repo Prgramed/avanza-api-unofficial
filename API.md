@@ -1,3 +1,19 @@
+# API Updates
+
+## Version 1.1.7 - 2025-05-18
+Avanza has updated their API endpoints. This library now uses the new _api format instead of the old _mobile format for most endpoints. This should improve reliability and compatibility with Avanza's latest API changes.
+
+The following key endpoints have been updated:
+- Account positions: `/_api/account/positions`
+- Account overview: `/_api/account/{0}/overview`
+- Stock information: `/_api/market-guide/stock/{0}`
+- Fund information: `/_api/fund-guide/{0}`
+- Chart data: `/_api/price-chart/stock/{0}`
+- Transactions: `/_api/account/transactions/{0}`
+- Watchlists: `/_api/usercontent/watchlist`
+
+No changes to your code should be required as these are internal updates to the API paths.
+
 <a name="Avanza"></a>
 
 ## Avanza ⇐ <code>EventEmitter</code>

@@ -19,12 +19,12 @@ const checkAuth = (t) => {
   return true
 }
 
-test.before(async (t) => {
-  // Create a new instance of Avanza and store it in the test context
-  avanza = new Avanza()
-  t.context.avanza = avanza
+test.beforeEach((t) => {
+  // Create a new instance of Avanza for each test to avoid shared state
+  const testAvanza = new Avanza();
+  t.context.avanza = testAvanza;
   
-  // Setup the stub method for tests that require call() to be stubbed
+  // Setup the mock method for tests that require call() to be mocked
   // This allows path tests to run without needing authentication
   t.context.avanza.call = function() {
     return Promise.resolve({});
@@ -32,16 +32,19 @@ test.before(async (t) => {
   
   // Mock authentication success by directly setting the properties
   // that would normally be set during successful authentication
-  avanza._authenticationSession = 'mock-session-123';
-  avanza._pushSubscriptionId = 'mock-subscription-123';
-  avanza._customerId = 'mock-customer-123';
-  avanza._securityToken = 'mock-token-123';
-  
-  // Set authenticated flag for test conditional checks
-  authenticated = true;
+  testAvanza._authenticationSession = 'mock-session-123';
+  testAvanza._pushSubscriptionId = 'mock-subscription-123';
+  testAvanza._customerId = 'mock-customer-123';
+  testAvanza._securityToken = 'mock-token-123';
   
   // Setup minimal socket-related methods to avoid errors in tests
-  avanza._socketHandleMessage = function() {};
+  testAvanza._socketHandleMessage = function() {};
+  
+  // Set once for all tests
+  if (!authenticated) {
+    authenticated = true;
+    avanza = testAvanza;
+  }
 })
 
 // Authentication tests
@@ -65,7 +68,7 @@ test('authentication sets required properties', async (t) => {
 
 // Path tests - These run without real API calls
 test.serial('path: getPositions()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   await t.context.avanza.getPositions()
   
   const actual = callStub.args[0]
@@ -75,7 +78,7 @@ test.serial('path: getPositions()', async (t) => {
 })
 
 test.serial('path: getOverview()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve([])) // Return a promise with an empty array
   await t.context.avanza.getOverview()
   
   const actual = callStub.args[0]
@@ -85,7 +88,7 @@ test.serial('path: getOverview()', async (t) => {
 })
 
 test.serial('path: getAccountOverview()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   await t.context.avanza.getAccountOverview('12345')
   
   const actual = callStub.args[0]
@@ -95,7 +98,7 @@ test.serial('path: getAccountOverview()', async (t) => {
 })
 
 test.serial('path: getDealsAndOrders()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   await t.context.avanza.getDealsAndOrders()
   
   const actual = callStub.args[0]
@@ -105,7 +108,7 @@ test.serial('path: getDealsAndOrders()', async (t) => {
 })
 
 test.serial('path: getTransactions() without options', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   await t.context.avanza.getTransactions('12345')
   
   const actual = callStub.args[0]
@@ -115,7 +118,7 @@ test.serial('path: getTransactions() without options', async (t) => {
 })
 
 test.serial('path: getTransactions() with options', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   await t.context.avanza.getTransactions('12345', {
     from: '2017-01-01',
     to: '2018-01-01',
@@ -134,7 +137,7 @@ test.serial('path: getTransactions() with options', async (t) => {
 })
 
 test.serial('path: getWatchlists()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve([]))
   await t.context.avanza.getWatchlists()
   
   const actual = callStub.args[0]
@@ -144,7 +147,7 @@ test.serial('path: getWatchlists()', async (t) => {
 })
 
 test.serial('path: addToWatchlist()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   await t.context.avanza.addToWatchlist('12345', '54321')
   
   const expectedPath = constants.paths.WATCHLISTS_ADD_DELETE_PATH.replace('{1}', '12345').replace('{0}', '54321')
@@ -156,7 +159,7 @@ test.serial('path: addToWatchlist()', async (t) => {
 })
 
 test.serial('path: removeFromWatchlist()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   await t.context.avanza.removeFromWatchlist('12345', '54321')
   
   const expectedPath = constants.paths.WATCHLISTS_ADD_DELETE_PATH.replace('{1}', '12345').replace('{0}', '54321')
@@ -168,9 +171,11 @@ test.serial('path: removeFromWatchlist()', async (t) => {
 })
 
 test.serial('path: getInstrument()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   await t.context.avanza.getInstrument('STOCK', '12345')
   
+  // Update this test to match the new format for API endpoints
+  // In the updated constants.js, stock-related endpoints use market-guide
   const actual = callStub.args[0]
   const expected = ['GET', constants.paths.INSTRUMENT_PATH.replace('{0}', 'stock').replace('{1}', '12345')]
   t.deepEqual(actual, expected)
@@ -178,7 +183,7 @@ test.serial('path: getInstrument()', async (t) => {
 })
 
 test.serial('path: getOrderbook()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   await t.context.avanza.getOrderbook('STOCK', '12345')
   
   const expectedPath = constants.paths.ORDERBOOK_PATH.replace('{0}', 'stock')
@@ -190,7 +195,7 @@ test.serial('path: getOrderbook()', async (t) => {
 })
 
 test.serial('path: getOrderbooks()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   await t.context.avanza.getOrderbooks(['123', '456', '789'])
   
   const expectedPath = constants.paths.ORDERBOOK_LIST_PATH.replace('{0}', '123,456,789')
@@ -202,7 +207,7 @@ test.serial('path: getOrderbooks()', async (t) => {
 })
 
 test.serial('path: getChartdata()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   await t.context.avanza.getChartdata('12345', 'test')
   
   const expectedPath = constants.paths.CHARTDATA_PATH.replace('{0}', '12345')
@@ -214,7 +219,7 @@ test.serial('path: getChartdata()', async (t) => {
 })
 
 test.serial('path: placeOrder()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   const options = {
     accountId: '123',
     orderbookId: '456',
@@ -232,7 +237,7 @@ test.serial('path: placeOrder()', async (t) => {
 })
 
 test.serial('path: getOrder()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   await t.context.avanza.getOrder('STOCK', '12345', '54321')
   
   const expectedPath = constants.paths.ORDER_GET_PATH.replace('{0}', 'stock')
@@ -244,7 +249,7 @@ test.serial('path: getOrder()', async (t) => {
 })
 
 test.serial('path: deleteOrder()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   await t.context.avanza.deleteOrder({ accountId: '12345', orderId: '54321' })
   
   const expectedPath = constants.paths.ORDER_DELETE_PATH
@@ -255,7 +260,7 @@ test.serial('path: deleteOrder()', async (t) => {
 })
 
 test.serial('path: editOrder()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
   const options = {
     accountId: '12345',
     volume: 42,
@@ -272,7 +277,7 @@ test.serial('path: editOrder()', async (t) => {
 })
 
 test.serial('path: search()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({ hits: [] }))
   await t.context.avanza.search('test query', 'STOCK', 50)
   
   const expectedOptions = {
@@ -293,7 +298,7 @@ test.serial('path: search()', async (t) => {
 })
 
 test.serial('path: getInspirationLists()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve([]))
   await t.context.avanza.getInspirationLists()
   
   const actual = callStub.args[0]
@@ -303,7 +308,7 @@ test.serial('path: getInspirationLists()', async (t) => {
 })
 
 test.serial('path: getInspirationList()', async (t) => {
-  const callStub = sinon.stub(t.context.avanza, 'call')
+  const callStub = sinon.stub(t.context.avanza, 'call').returns(Promise.resolve([]))
   await t.context.avanza.getInspirationList('HIGHEST_RATED_FUNDS')
   
   const actual = callStub.args[0]
@@ -314,8 +319,8 @@ test.serial('path: getInspirationList()', async (t) => {
 
 // API tests with mocked responses
 test('mock: getPositions() returns positions', async (t) => {
-  // Setup mock response
-  const originalCall = t.context.avanza.call;
+  // No need to store original call since each test has its own context
+  // Simply override the call method for this test
   t.context.avanza.call = () => Promise.resolve({ 
     instrumentPositions: [], 
     totalBalance: 10000, 
@@ -324,34 +329,38 @@ test('mock: getPositions() returns positions', async (t) => {
   
   const positions = await t.context.avanza.getPositions();
   
-  // Restore original call method
-  t.context.avanza.call = originalCall;
-  
   t.truthy(positions);
   t.true(typeof positions === 'object');
 })
 
 test('mock: getOverview() returns overview', async (t) => {
-  // Setup mock response
-  const originalCall = t.context.avanza.call;
-  t.context.avanza.call = () => Promise.resolve({ 
-    accounts: [], 
-    totalBalance: 10000, 
-    totalOwnCapital: 9000 
-  });
+  // Mock the new API response format for this test
+  t.context.avanza.call = () => Promise.resolve([
+    {
+      name: "Test Account",
+      accountId: "1234567",
+      accountType: "KAPITALFORSAKRING",
+      availableForPurchase: 10000,
+      positions: [],
+      currencyBalances: [
+        {
+          currency: "SEK",
+          countryCode: "SE",
+          balance: 10000
+        }
+      ]
+    }
+  ]);
   
   const overview = await t.context.avanza.getOverview();
   
-  // Restore original call method
-  t.context.avanza.call = originalCall;
-  
   t.truthy(overview);
   t.true(typeof overview === 'object');
+  t.true(typeof overview.accounts !== 'undefined');
+  t.true(typeof overview.totalBalance !== 'undefined');
 })
 
 test('mock: getDealsAndOrders() returns deals and orders', async (t) => {
-  // Setup mock response
-  const originalCall = t.context.avanza.call;
   t.context.avanza.call = () => Promise.resolve({ 
     accounts: [], 
     deals: [],
@@ -360,16 +369,11 @@ test('mock: getDealsAndOrders() returns deals and orders', async (t) => {
   
   const dealsAndOrders = await t.context.avanza.getDealsAndOrders();
   
-  // Restore original call method
-  t.context.avanza.call = originalCall;
-  
   t.truthy(dealsAndOrders);
   t.true(typeof dealsAndOrders === 'object');
 })
 
 test('mock: getWatchlists() returns watchlists', async (t) => {
-  // Setup mock response
-  const originalCall = t.context.avanza.call;
   t.context.avanza.call = () => Promise.resolve([
     { id: '1', name: 'Watchlist 1', orderbooks: [] },
     { id: '2', name: 'Watchlist 2', orderbooks: [] }
@@ -377,16 +381,11 @@ test('mock: getWatchlists() returns watchlists', async (t) => {
   
   const watchlists = await t.context.avanza.getWatchlists();
   
-  // Restore original call method
-  t.context.avanza.call = originalCall;
-  
   t.truthy(watchlists);
   t.true(Array.isArray(watchlists));
 })
 
 test('mock: search() returns search results', async (t) => {
-  // Setup mock response
-  const originalCall = t.context.avanza.call;
   t.context.avanza.call = () => Promise.resolve({ 
     hits: [
       { 
@@ -400,17 +399,12 @@ test('mock: search() returns search results', async (t) => {
   
   const searchResults = await t.context.avanza.search('Volvo', Avanza.STOCK, 5);
   
-  // Restore original call method
-  t.context.avanza.call = originalCall;
-  
   t.truthy(searchResults);
   t.true(typeof searchResults === 'object');
   t.true(Array.isArray(searchResults.hits));
 })
 
 test('mock: getInspirationLists() returns inspiration lists', async (t) => {
-  // Setup mock response
-  const originalCall = t.context.avanza.call;
   t.context.avanza.call = () => Promise.resolve([
     { id: '1', name: 'Inspiration List 1', orderbooks: [] },
     { id: '2', name: 'Inspiration List 2', orderbooks: [] }
@@ -418,16 +412,11 @@ test('mock: getInspirationLists() returns inspiration lists', async (t) => {
   
   const lists = await t.context.avanza.getInspirationLists();
   
-  // Restore original call method
-  t.context.avanza.call = originalCall;
-  
   t.truthy(lists);
   t.true(Array.isArray(lists));
 })
 
 test('mock: getOrderbook() returns orderbook data', async (t) => {
-  // Setup mock response
-  const originalCall = t.context.avanza.call;
   t.context.avanza.call = () => Promise.resolve({ 
     orderbook: {
       id: '5361',
@@ -445,17 +434,12 @@ test('mock: getOrderbook() returns orderbook data', async (t) => {
   
   const orderbook = await t.context.avanza.getOrderbook(Avanza.STOCK, stockId);
   
-  // Restore original call method
-  t.context.avanza.call = originalCall;
-  
   t.truthy(orderbook);
   t.true(typeof orderbook === 'object');
   t.truthy(orderbook.orderbook);
 })
 
 test('mock: getChartdata() returns chart data', async (t) => {
-  // Setup mock response
-  const originalCall = t.context.avanza.call;
   t.context.avanza.call = () => Promise.resolve({ 
     dataSeries: [
       { timestamp: '2020-01-01', value: 100 },
@@ -471,9 +455,6 @@ test('mock: getChartdata() returns chart data', async (t) => {
   const stockId = '5361';
   
   const chartdata = await t.context.avanza.getChartdata(stockId, Avanza.ONE_MONTH);
-  
-  // Restore original call method
-  t.context.avanza.call = originalCall;
   
   t.truthy(chartdata);
   t.true(typeof chartdata === 'object');

@@ -1,0 +1,53 @@
+{
+  "mobile": [],
+  "api": [
+    "/_api/alert/alerts",
+    "/_api/authentication/session/info/session",
+    "/_api/authentication/sessions/usercredentials",
+    "/_api/authentication/v2/sessions/bankid/collect",
+    "/_api/faq/v2/article",
+    "/_api/faq/v2/article-type",
+    "/_api/fund-guide/chart/timeperiods/32347",
+    "/_api/fund-guide/get-favourites",
+    "/_api/fund-guide/list",
+    "/_api/fund-guide/list/owned-funds",
+    "/_api/market-guide/stock/26268",
+    "/_api/market-guide/stock/26268/details",
+    "/_api/market-guide/stock/5447",
+    "/_api/market-guide/stock/5447/details",
+    "/_api/market-guide/stock/643541",
+    "/_api/market-guide/stock/643541/details",
+    "/_api/market-index/155458",
+    "/_api/market-index/19002",
+    "/_api/market-index/header-index",
+    "/_api/mobile-content-repo/document-list/startpage_campaigns",
+    "/_api/mobile-content-repo/document-list/startpage_featured",
+    "/_api/price-chart/stock/155458",
+    "/_api/price-chart/stock/19002",
+    "/_api/price-chart/stock/26268",
+    "/_api/price-chart/stock/26268/compare/1002994",
+    "/_api/price-chart/stock/5447",
+    "/_api/price-chart/stock/5447/compare/1002994",
+    "/_api/price-chart/stock/643541",
+    "/_api/price-chart/stock/643541/compare/1002994",
+    "/_api/pwa-feature-toggles/features",
+    "/_api/quartr-integration/company/CH0012221716",
+    "/_api/quartr-integration/company/SE0011337708",
+    "/_api/quartr-integration/company/SE0014401378",
+    "/_api/systemmessage/messages-filtered",
+    "/_api/trading/rest/trading-calendar/market-status/SE/2025-05-17",
+    "/_api/trading/rest/trading-calendar/market-status/US/2025-05-17"
+  ],
+  "other": [
+    "/_cqbe/client/metrics/pwa-web/error/navigation-error",
+    "/_cqbe/client/metrics/pwa-web/warning/page-not-found"
+  ],
+  "timestamp": "2025-05-17T22:07:42.966Z",
+  "totalRequests": 252,
+  "statistics": {
+    "totalUniqueEndpoints": 38,
+    "mobileEndpoints": 0,
+    "apiEndpoints": 36,
+    "otherEndpoints": 2
+  }
+}

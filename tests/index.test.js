@@ -49,15 +49,30 @@ test('mock: API call after being authenticated', async t => {
   
   // Setup mock response
   const originalCall = avanza.call;
-  avanza.call = () => Promise.resolve({ 
-    accounts: [], 
-    totalBalance: 10000, 
-    totalOwnCapital: 9000 
-  });
+  // Mock the new API response format
+  avanza.call = () => Promise.resolve([
+    {
+      name: "Test Account",
+      accountId: "1234567",
+      accountType: "KAPITALFORSAKRING",
+      availableForPurchase: 10000,
+      positions: [],
+      currencyBalances: [
+        {
+          currency: "SEK",
+          countryCode: "SE",
+          balance: 10000
+        }
+      ]
+    }
+  ]);
   
   try {
     const result = await avanza.getOverview();
     t.truthy(result);
+    t.true(typeof result.accounts !== 'undefined');
+    t.true(typeof result.totalBalance !== 'undefined');
+    t.true(Array.isArray(result.accounts));
   } catch (error) {
     t.fail(`API call failed: ${error.message || error.statusMessage}`);
   }

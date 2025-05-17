@@ -1,0 +1,44 @@
+[
+  {
+    "url": "https://www.avanza.se/_api/authentication/session/info/session",
+    "method": "GET",
+    "resourceType": "xhr",
+    "time": "2025-05-17T22:04:44.314Z",
+    "endpoint": "/_api/authentication/session/info/session"
+  },
+  {
+    "url": "https://www.avanza.se/_api/pwa-feature-toggles/features",
+    "method": "GET",
+    "resourceType": "xhr",
+    "time": "2025-05-17T22:04:44.351Z",
+    "endpoint": "/_api/pwa-feature-toggles/features"
+  },
+  {
+    "url": "https://www.avanza.se/_api/market-index/header-index",
+    "method": "GET",
+    "resourceType": "xhr",
+    "time": "2025-05-17T22:04:44.351Z",
+    "endpoint": "/_api/market-index/header-index"
+  },
+  {
+    "url": "https://www.avanza.se/_api/mobile-content-repo/document-list/startpage_featured",
+    "method": "GET",
+    "resourceType": "xhr",
+    "time": "2025-05-17T22:04:44.468Z",
+    "endpoint": "/_api/mobile-content-repo/document-list/startpage_featured"
+  },
+  {
+    "url": "https://www.avanza.se/_api/mobile-content-repo/document-list/startpage_campaigns",
+    "method": "GET",
+    "resourceType": "xhr",
+    "time": "2025-05-17T22:04:44.468Z",
+    "endpoint": "/_api/mobile-content-repo/document-list/startpage_campaigns"
+  },
+  {
+    "url": "https://www.avanza.se/_api/systemmessage/messages-filtered?tag=start",
+    "method": "GET",
+    "resourceType": "xhr",
+    "time": "2025-05-17T22:04:44.469Z",
+    "endpoint": "/_api/systemmessage/messages-filtered"
+  }
+]

@@ -98,6 +98,27 @@ $ npm run test:coverage
 ### Testing in CI/CD
 
 The GitHub Actions workflow runs the path tests automatically without requiring credentials.
+
+## API Endpoint Maintenance
+
+This library includes a tool to help detect changes in Avanza's API endpoints, which can change without notice.
+
+### Endpoint Crawler
+
+The endpoint crawler logs into Avanza's web interface using Puppeteer and monitors network traffic to detect API endpoints. This helps discover when endpoints have changed (e.g., from `/_mobile/` to `/_api/` paths).
+
+```bash
+# Install required dependencies if not already installed
+npm install
+
+# Run the endpoint crawler
+npm run endpoint-crawler
+
+# Run with comparison against current constants.js
+npm run check-endpoints
+```
+
+See [ENDPOINT_CRAWLER.md](./scripts/ENDPOINT_CRAWLER.md) for detailed documentation on using the crawler and keeping the API up to date.
 ## LICENSE
 
 MIT license. See the LICENSE file for details.

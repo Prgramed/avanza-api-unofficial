@@ -9,7 +9,8 @@ require('dotenv').config({ path: path.join(__dirname, '..', '.env') })
 
 test.beforeEach(t => {
   t.context.avanza = new Avanza()
-  sinon.stub(t.context.avanza, 'call')
+  // Make sure all stubs return a promise
+  sinon.stub(t.context.avanza, 'call').returns(Promise.resolve({}))
 })
 
 test.serial('getAccountOverview()', async t => {
