@@ -120,7 +120,7 @@ test.serial('path: getAccountsList()', async (t) => {
   await t.context.avanza.getAccountsList()
   
   const actual = callStub.args[0]
-  const expected = ['GET', constants.paths.ACCOUNTS_LIST_PATH]
+  const expected = ['GET', constants.paths.ACCOUNTS_LIST_PATH, {}]
   t.deepEqual(actual, expected)
   callStub.restore()
 })

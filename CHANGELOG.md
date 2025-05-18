@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.11] - 2025-05-18
+
+### Changed
+- Cookie management and minor bug fixes
+
 ## [1.1.10] - 2025-05-18
 
 ### Changed
